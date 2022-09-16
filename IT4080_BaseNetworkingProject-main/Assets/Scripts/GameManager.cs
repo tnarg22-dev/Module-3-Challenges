@@ -80,6 +80,6 @@ public class GameManager : NetworkBehaviour {
         Player player = po.GetComponent<Player>();
         player.PlayerColor.Value = newColor;
     }
-
+ 
 
 }
