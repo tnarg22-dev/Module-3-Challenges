@@ -7,6 +7,8 @@ using UnityEngine;
 // This adds the serverStartType property which allows you to specify how the project
 // should be run when running through the Unity editor.
 public class GameManager : NetworkBehaviour {
+    public NetworkVariable<int> playersInGame = new NetworkVariable<int>();
+    private string players;
     public NetworkCommandLine.StartModes serverStartType = NetworkCommandLine.StartModes.CHOOSE;
     private GameObject networkCmdlnObj;
 
@@ -23,18 +25,30 @@ public class GameManager : NetworkBehaviour {
 
 
 
-
-
-
-
-
-
+    private void FixedUpdate()
+    {
+       
+    }
     private void Start() {
         if (Application.isEditor) {
             networkCmdlnObj = GameObject.Find("NetworkCommandLine");
             var networkCmdln = networkCmdlnObj.GetComponent<NetworkCommandLine>();
             networkCmdln.StartAs(serverStartType);
         }
+        NetworkManager.Singleton.OnClientConnectedCallback += (id) =>
+        {
+            if (IsClient)
+            {
+                playersInGame.Value++;
+            }
+        };
+        NetworkManager.Singleton.OnClientDisconnectCallback += (id) =>
+        {
+            if (IsClient)
+            {
+                playersInGame.Value--;
+            }
+        };
     }
 
 
@@ -44,6 +58,7 @@ public class GameManager : NetworkBehaviour {
             StartButtons();
         } else {
             StatusLabels();
+          
         }
 
         GUILayout.EndArea();
@@ -64,6 +79,8 @@ public class GameManager : NetworkBehaviour {
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
+        
+        
     }
     [ServerRpc(RequireOwnership = false)]
     public void RequestNewPayerColorServerRpc(ServerRpcParams serverRpcParams = default)
@@ -80,6 +97,6 @@ public class GameManager : NetworkBehaviour {
         Player player = po.GetComponent<Player>();
         player.PlayerColor.Value = newColor;
     }
- 
+
 
 }

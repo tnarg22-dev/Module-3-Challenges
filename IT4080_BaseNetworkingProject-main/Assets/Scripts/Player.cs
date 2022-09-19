@@ -4,6 +4,7 @@ using UnityEngine;
 public class Player : NetworkBehaviour {
 
     public NetworkVariable<Vector3> Position = new NetworkVariable<Vector3>();
+    public NetworkVariable<int> playersInGame = new NetworkVariable<int>();
     public NetworkVariable<Color> PlayerColor = new NetworkVariable<Color>(Color.red);
     private GameManager _gameMgr;
     public float movespeed = 1.0f;
@@ -11,7 +12,31 @@ public class Player : NetworkBehaviour {
     {
         ApplyPlayerColor();
         PlayerColor.OnValueChanged += OnPlayerColorChanged;
+
+        NetworkManager.Singleton.OnClientConnectedCallback += (id) =>
+        {
+            if (IsClient)
+            {
+                playersInGame.Value++;
+            }
+        }; 
+        NetworkManager.Singleton.OnClientDisconnectCallback += (id) =>
+        {
+            if (IsClient)
+            {
+                playersInGame.Value--;
+            }
+        };
         
+        
+        
+    }
+    public int PlayersInGame
+    {
+        get
+        {
+           return playersInGame.Value;
+        }
     }
     private void Update()
     {
