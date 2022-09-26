@@ -7,6 +7,7 @@ public class Player : NetworkBehaviour {
     public NetworkVariable<int> playersInGame = new NetworkVariable<int>();
     public NetworkVariable<Color> PlayerColor = new NetworkVariable<Color>(Color.red);
     private GameManager _gameMgr;
+    private Camera _camera;
     public float movespeed = 1.0f;
     public void Start()
     {
@@ -27,9 +28,20 @@ public class Player : NetworkBehaviour {
                 playersInGame.Value--;
             }
         };
-        
-        
-        
+
+
+    } 
+    public override void OnNetworkSpawn()
+    {   
+        _camera = transform.Find("Camera").GetComponent<Camera>();
+
+        if (IsOwner)
+        {
+            _gameMgr = GameObject.Find("GameManager").GetComponent<GameManager>();
+            _gameMgr.RequestNewPayerColorServerRpc();
+            Debug.Log("requested");
+        }
+        _camera.enabled = IsOwner;
     }
     public int PlayersInGame
     {
@@ -54,19 +66,11 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsOwner)
-        {
-            _gameMgr = GameObject.Find("GameManager").GetComponent<GameManager>();
-            _gameMgr.RequestNewPayerColorServerRpc();
-            Debug.Log("requested");
-        }
-    }
+  
    
     Vector3 calcmovement()
     {
-        Vector3 moveVect = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 moveVect = new Vector3(0,0, Input.GetAxis("Horizontal"));
         moveVect *= movespeed;
             return moveVect;
     }
