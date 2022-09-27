@@ -60,7 +60,7 @@ public class Player : NetworkBehaviour {
                 RequestPostionForMovementServerRpc(move);
             }
         }
-        else
+        if(!IsOwner || IsHost)
         {
             transform.position = Position.Value;
         }
@@ -71,8 +71,15 @@ public class Player : NetworkBehaviour {
     Vector3 calcmovement()
     {
         Vector3 moveVect = new Vector3(0,0, Input.GetAxis("Horizontal"));
+    
+
         moveVect *= movespeed;
+        
             return moveVect;
+
+        
+
+
     }
     [ServerRpc]
     void RequestPostionForMovementServerRpc(Vector3 movement)
