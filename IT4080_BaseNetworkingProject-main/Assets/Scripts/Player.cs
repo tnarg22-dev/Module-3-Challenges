@@ -1,19 +1,22 @@
 using Unity.Netcode;
 using UnityEngine;
+using Unity.Collections;
 
 public class Player : NetworkBehaviour {
 
     public NetworkVariable<Vector3> Position = new NetworkVariable<Vector3>();
     public NetworkVariable<int> playersInGame = new NetworkVariable<int>();
     public NetworkVariable<Color> PlayerColor = new NetworkVariable<Color>(Color.red);
+    public BulletSpawner _bulletSpawner;
     private GameManager _gameMgr;
     private Camera _camera;
     public float movespeed = 1.0f;
+
     public void Start()
     {
         ApplyPlayerColor();
         PlayerColor.OnValueChanged += OnPlayerColorChanged;
-
+        _bulletSpawner = transform.Find("BulletSpawn").GetComponent<BulletSpawner>();
         NetworkManager.Singleton.OnClientConnectedCallback += (id) =>
         {
             if (IsClient)
@@ -52,6 +55,10 @@ public class Player : NetworkBehaviour {
     }
     private void Update()
     {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            _bulletSpawner.Fire();
+        }
         if (IsOwner)
         {
             Vector3 move = calcmovement();
