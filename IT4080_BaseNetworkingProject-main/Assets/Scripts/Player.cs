@@ -17,20 +17,7 @@ public class Player : NetworkBehaviour {
         ApplyPlayerColor();
         PlayerColor.OnValueChanged += OnPlayerColorChanged;
         _bulletSpawner = transform.Find("BulletSpawn").GetComponent<BulletSpawner>();
-        NetworkManager.Singleton.OnClientConnectedCallback += (id) =>
-        {
-            if (IsClient)
-            {
-                playersInGame.Value++;
-            }
-        }; 
-        NetworkManager.Singleton.OnClientDisconnectCallback += (id) =>
-        {
-            if (IsClient)
-            {
-                playersInGame.Value--;
-            }
-        };
+  
 
 
     } 
@@ -46,18 +33,18 @@ public class Player : NetworkBehaviour {
         }
         _camera.enabled = IsOwner;
     }
-    public int PlayersInGame
-    {
-        get
-        {
-           return playersInGame.Value;
-        }
-    }
+
     private void Update()
     {
         if (Input.GetButtonDown("Fire1"))
         {
-            _bulletSpawner.Fire();
+            if (IsOwner)
+            {
+                _bulletSpawner.FireServerRpc();
+               
+
+            }
+            
         }
         if (IsOwner)
         {

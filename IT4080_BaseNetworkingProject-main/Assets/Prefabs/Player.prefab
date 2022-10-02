@@ -1424,6 +1424,7 @@ MonoBehaviour:
     m_InternalValue: 0
   PlayerColor:
     m_InternalValue: {r: 1, g: 0, b: 0, a: 1}
+  _bulletSpawner: {fileID: 0}
   movespeed: 0.2
 --- !u!114 &1064913812658042584
 MonoBehaviour:
@@ -1450,7 +1451,7 @@ MonoBehaviour:
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   InLocalSpace: 0
-  Interpolate: 0
+  Interpolate: 1
 --- !u!54 &5344045475386191949
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1465,7 +1466,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 94
+  m_Constraints: 126
   m_CollisionDetection: 1
 --- !u!114 &8130343364827763377
 MonoBehaviour:
